@@ -1,0 +1,4 @@
+pygame.K_RIGHT
+pygame.K_LEFT
+pygame.K_UP
+pygame.K_SPACE
