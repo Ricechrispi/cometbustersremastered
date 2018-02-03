@@ -20,11 +20,11 @@ class Settings():
 		
 	
 	def toggle_fx(self):
-		if fx_is_muted:
-			fx_is_muted = False
+		if self.fx_is_muted:
+			self.fx_is_muted = False
 			self.fx_volume = self.old_fx_volume
 		else:
-			fx_is_muted = True
+			self.fx_is_muted = True
 			self.old_fx_volume = self.fx_volume
 			self.fx_volume = 0
 	
