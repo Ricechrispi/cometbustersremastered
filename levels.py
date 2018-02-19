@@ -1,5 +1,4 @@
 import pygame
-import pygame
 import numpy as np
 import random
 import math
@@ -7,7 +6,7 @@ import math
 import utility_functions as util
 import hostiles
 
-class Level():
+class Level:
 	
 	def __init__(self, screen):
 		#TODO: things like, start round, points, background color?
@@ -17,7 +16,8 @@ class Level():
 		
 		self.round_number = 0
 		
-		self.comets = []
+		self.comets = pygame.sprite.Group()
+
 		self.smiley_chances = []
 		self.comet_images_big = []
 		self.comet_images_med = []
@@ -34,14 +34,14 @@ class Level():
 	def update(self):
 		for comet in self.comets:
 			comet.update()
-			
+
 		
 	def blitme(self):
 		for comet in self.comets:
 			comet.blitme()
 
-	def spawn_comet_children(self, comet):
-		
+	def spawn_comet_children(self, comet, v_killer):
+
 		#TODO: I am not comfortable with using exact pixel sizes here
 		new_size = 0
 		new_points = 0
@@ -50,23 +50,38 @@ class Level():
 			new_size = 37
 			new_points = 50
 			image = self.comet_images_med[self.round_number]
-		if comet.size == 37:
+		elif comet.size == 37:
 			new_size = 17
 			new_points = 100
 			image = self.comet_images_small[self.round_number]
-			
-		original_v = comet.v_moving
-			
+		else:
+			return
 
-		new_comet1 = hostiles.Comet(comet.pos, self.screen, new_size,
-						self, image, None, new_points) #TODO vector1
-		
-		new_comet2 = hostiles.Comet(comet.pos, self.screen, new_size,
-						self, image, None, new_points) #TODO vector2
-						
-						
-		self.comets.append(new_comet1)
-		self.comets.append(new_comet2)
+		new_v = np.array([comet.v_moving[0] + v_killer[0], comet.v_moving[1] + v_killer[1]])
+		#TODO: this is not very realistic, mostly bullshit..
+		new_v1 = util.rotate_v(new_v, 45)
+		new_v2 = util.rotate_v(new_v, -45)
+
+		new_comet1 = hostiles.Comet([comet.rect.centerx,comet.rect.centery], self.screen, new_size,
+						self, image, new_v1, new_points)
+
+		new_comet2 = hostiles.Comet([comet.rect.centerx,comet.rect.centery], self.screen, new_size,
+						self, image, new_v2, new_points)
+
+		#print("debug: parent comet.v_moving: " + str(comet.v_moving))
+		#print("debug: parent rect.centerx: " + str(comet.rect.centerx))
+		#print("debug: parent rect.centery: " + str(comet.rect.centery))
+
+		#print("debug: child1 v_moving: " + str(new_comet1.v_moving))
+		#print("debug: child1 rect.centerx: " + str(new_comet1.rect.centerx))
+		#print("debug: child1 rect.centery: " + str(new_comet1.rect.centery))
+
+		#print("debug: child2 v_moving: " + str(new_comet2.v_moving))
+		#print("debug: child2 rect.centerx: " + str(new_comet2.rect.centerx))
+		#print("debug: child2 rect.centery: " + str(new_comet2.rect.centery))
+
+		self.comets.add(new_comet1)
+		self.comets.add(new_comet2)
 
 
 	def spawn_comets(self, amount, velocity):
@@ -84,12 +99,9 @@ class Level():
 						self.comet_images_big[self.round_number], new_vectors[i], 20)
 						
 						
-						
-			self.comets.append(new_comet)
+			self.comets.add(new_comet)
 			i += 1
-			
-			
-			
+
 	
 	def generate_spawn_points(self, amount):
 	

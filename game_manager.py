@@ -29,6 +29,11 @@ def run_game():
 
 	bg_color = (0,0,0) #black, background_color
 
+	level = levels.Level(screen)
+	level.spawn_comets(9, 0.4)
+	# level 1: 9 on easy, 12 on challenging, 14 on impossible
+	#
+
 	upper_left = (settings.screen_width/4,settings.screen_height/4)
 	upper_right = (3*(settings.screen_width/4),settings.screen_height/4)
 	lower_left = (settings.screen_width/4,3*(settings.screen_height/4))
@@ -52,25 +57,21 @@ def run_game():
 	ships = []
 	controls = []
 	for i in list(range(0,number_of_players)):
-		s = ship.Ship(ship_spawns[i],screen, 31,profiles[i].ship_props,i+1) #I start counting players from 1
+		s = ship.Ship(ship_spawns[i],screen, 31,profiles[i].ship_props,i+1, level) #I start counting players from 1
 		ships.append(s)
 		controls.append(profiles[i].control_scheme)
 
-	#ships = pygame.sprite.Group()
-	#TODO: sprite.Group() allows for more functions, but game_functions needs a list for now... CHANGE GAME_FUNCTIONS KEYDOWN STUFF
+
 	gf = game_functions.GameFunctions(ships,controls)
 	clock = pygame.time.Clock()
 	
-	level = levels.Level(screen)
-	level.spawn_comets(9, 0.4)
-	#level 1: 9 on easy, 12 on challenging, 14 on impossible
-	#
+
 
 	# Starting the main game loop
 	while True:
 		
 		#makes the loop wait a certain amount of time to achieve 60 ticks per s
-		clock.tick(60) 
+		clock.tick(60)
 		
 		gf.check_events()
 		gf.update_screen(bg_color, screen, level)

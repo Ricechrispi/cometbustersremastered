@@ -7,7 +7,7 @@ class Movable(pygame.sprite.Sprite):
 	def __init__(self, pos, screen, size):
 		super().__init__()
 		
-		self.pos = [pos[0], pos[1]]
+		#self.pos = [pos[0], pos[1]]
 		self.spawn_pos = [pos[0],pos[1]] #spawn is the same as the start location
 		self.hidden = False
 
@@ -66,10 +66,11 @@ class Movable(pygame.sprite.Sprite):
 	def blitme_impl(self):
 		print("NEVER USE THIS, OVERRIDE ME! @blitme, Movable")
 
-	def killme(self):
+	def killme(self, v_killer=None):
 		self.hidden = True
-		self.killme_impl()
+		self.killme_impl(v_killer)
 
-	def killme_impl(self):
+	def killme_impl(self, v_killer=None):
 		print("NEVER USE THIS, OVERRIDE ME! @killme, Movable")
+
 

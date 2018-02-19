@@ -18,7 +18,7 @@ class GameFunctions():
 				sys.exit() #if the game is closed by pressing the X
 
 			elif event.type == pygame.KEYDOWN or event.type == pygame.KEYUP:
-				print("debug: key pressed: " + str(event.key))
+				#print("debug: key pressed: " + str(event.key))
 
 				if event.key == pygame.K_ESCAPE: #TODO maybe remove this, escape closes the game
 					sys.exit()

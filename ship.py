@@ -58,20 +58,21 @@ class ShipProperties():
 class Ship(Movable):
 	"""The player controlled ship"""
 	
-	def __init__(self, pos, screen, size, props, player_number):	
+	def __init__(self, pos, screen, size, props, player_number, level):
 		super().__init__(pos, screen, size)
 
 		#TODO: balance these!
 		self.f_drag = 0.995
-		self.base_speed = 4.0 
-		self.base_rot = 1.2
-		self.base_bullet_speed = 1.0
+		self.base_speed = 4.5
+		self.base_rot = 3.8
+		self.base_bullet_speed = 6.4
 		self.base_shield = 1.0
 		self.base_disruptor = 1.0
 		self.base_hyperspace = 1.0
 		
 		self.props = props
 		self.player_number = player_number
+		self.level = level
 		#TODO the values are unchecked
 
 		image_name = "pics/"+props.color+".png"
@@ -86,7 +87,7 @@ class Ship(Movable):
 		self.b_using_special = False
 		
 		#TODO: balance hp and size here!
-		self.weapon = Weapon(self, 5, 160, 13, "pics/bullet_dummy.png", "TODO:soundfile")
+		self.weapon = Weapon(self, 5, 120, 13, "pics/bullet_dummy.png", self.level, "TODO:soundfile")
 		
 
 

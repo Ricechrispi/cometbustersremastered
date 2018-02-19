@@ -44,5 +44,6 @@ class Comet(Movable):
 	def blitme_impl(self):
 		self.screen.blit(self.image, self.rect)
 
-	def killme_impl(self):
-		pass #TODO implement me!
+	def killme_impl(self, killer_v=None):
+		self.kill()
+		self.level.spawn_comet_children(self, killer_v)
