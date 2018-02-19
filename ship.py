@@ -22,6 +22,8 @@ class ShipProperties():
 		self.f_rot_speed = f_rot_speed
 		self.f_special = f_special
 		self.special_type = special_type
+
+		self.props = [color,f_bullet_speed,f_thrust,f_max_speed,f_rot_speed,f_special,special_type]
 		
 		
 	def check_values(self, bs, th, ms, rs, sp, st): #TODO color?

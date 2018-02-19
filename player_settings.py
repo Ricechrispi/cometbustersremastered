@@ -1,35 +1,24 @@
 """
-	TODO: 	read and load with json!
-			maybe even be able to choose a file to load
-			maybe make a class with like 'forwad = "w"' etc.
-			things like ShipProperties, (color, floats..)
-			things like keybindings
+	TODO: 	be able to choose a file to load
 			reset button?
-	
 """
 import json
 
 import ship
 
 class ControlScheme():
-	"""a class that containts the relevant button mappings"""
+	"""a class that contains the relevant button mappings"""
 	
 	def __init__(self, forward, left, right, shoot, special):
-		#TODO: do is save these things as strings?
-		
-		self.forwad = forwad
-		self.left = left
-		self.right = right
-		self.shoot = shoot
-		self.special = special
-		
-	#TODO: def __str__(self):
+		self.controls = [forward,left,right,shoot,special]
+
+	def __str__(self):
+		return str(self.controls)
 
 
 class PlayerProfile():
 	"""a profile containter that saves ships configuration and control scheme"""
-	
-	
+
 	def __init__(self, control_scheme, ship_props):
 		self.control_scheme = control_scheme
 		self.ship_props = ship_props
@@ -38,12 +27,21 @@ class PlayerProfile():
 
 class ProfileFileHandler():
 	"""a class to load and save a profile from a file, using json"""
-	
-	def __init__(self):
-		pass #TODO implement?
 		
-	def load_profile(self, filename, slot_number):
-		pass #TODO implement!
+	def load_profile(filename):
+		with open(filename) as f_obj:
+			list = json.load(f_obj)
+			#TODO verify integrity of the file!
+			controls = list[0]
+			props = list[1]
+			control_scheme = ControlScheme(controls[0],controls[1],controls[2],controls[3],controls[4])
+			ship_props = ship.ShipProperties(props[0],props[1],props[2],props[3],props[4],props[5],props[6])
+			return PlayerProfile(control_scheme,ship_props)
+
 		
-	def save_profile(self, filename, player_profile):
-		pass #TODO implement!
+	def save_profile(filename, player_profile):
+
+		list = [player_profile.control_scheme.controls, player_profile.ship_props.props]
+		with open(filename, "w") as f_obj:
+			json.dump(list, f_obj)
+
