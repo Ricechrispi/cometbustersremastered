@@ -1,5 +1,4 @@
 import pygame
-import json
 
 import ship
 import game_settings as gs
@@ -11,20 +10,20 @@ import levels
 
 def run_game():
 
-	number_of_players = 4
+	settings = gs.Settings("config/settings.json")
+
+	number_of_players = 1
 
 	profiles = []
-	for i in list(range(1,number_of_players+1)):
-		profiles.append(ps.ProfileFileHandler.load_profile("./config/p"+str(i)+".json"))
+	for s in settings.profile_paths:
+		profiles.append(ps.ProfileFileHandler.load_profile(s))
 
 	#ps.ProfileFileHandler.save_profile("testSave",profile) #TODO this is testing stuff, remove later!
+	#settings.save_settings("testsavesettings.json")
 	
 	#init the game window
 	pygame.init()
-	
-	#TODO: load a settings file (json) here instead
-	settings = gs.Settings() #loading the defaults
-	
+
 	screen = pygame.display.set_mode((settings.screen_width, settings.screen_height))
 	pygame.display.set_caption("WIP: _project") #TODO get the proper name here
 

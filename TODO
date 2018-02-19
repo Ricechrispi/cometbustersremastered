@@ -1,4 +1,4 @@
-BIG TODOS: 	load player settings and ship props, yes i want to do this now!
+BIG TODOS:
 		figure out size of medium small comets, small one range from 16x16 to 20x20 (one with 20x18????) currently 21x21, way too big
 		read and use: https://www.pygame.org/docs/ref/sprite.html#pygame.sprite.Sprite
 		"kill" method for movables
@@ -15,5 +15,6 @@ BIG TODOS: 	load player settings and ship props, yes i want to do this now!
 		special abilities: disruptor, shield, hyperspace, (none)
 		MENUE!!!!!
 		multiplayer: loading/changeing input, maybe fix it at first
+		generate/draw stars!
 
 
