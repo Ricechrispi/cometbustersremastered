@@ -76,7 +76,7 @@ class Bullet(Movable):
 		self.v_moving[1] = creator.v_moving[1] + self.v_facing[1] * (self.base_speed * creator.props.f_bullet_speed)
 		
 		
-	def blitme(self):
+	def blitme_impl(self):
 		self.screen.blit(self.image, self.rect)	
 		
 	def update_impl(self):

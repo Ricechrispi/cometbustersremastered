@@ -41,5 +41,8 @@ class Comet(Movable):
 		pass
 		#TODO: do something here?
 	
-	def blitme(self):
+	def blitme_impl(self):
 		self.screen.blit(self.image, self.rect)
+
+	def killme_impl(self):
+		pass #TODO implement me!

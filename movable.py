@@ -8,6 +8,9 @@ class Movable(pygame.sprite.Sprite):
 		super().__init__()
 		
 		self.pos = [pos[0], pos[1]]
+		self.spawn_pos = [pos[0],pos[1]] #spawn is the same as the start location
+		self.hidden = False
+
 		self.screen = screen
 		self.screen_rect = screen.get_rect()
 		self.screen_dims = screen.get_size() #(width, height)
@@ -24,36 +27,49 @@ class Movable(pygame.sprite.Sprite):
 		self.f_centerx = float(self.rect.centerx)
 		self.f_centery = float(self.rect.centery)
 	
+	def spawn(self):
+		self.pos = [self.spawn_pos[0], self.spawn_pos[1]]
+		self.hidden = False
 
 	def update(self):
-		
-		for i in [0,1]: #this is to prevent absurd calculations of drag
-			if math.fabs(self.v_moving[i]) <= 0.0005:
-				self.v_moving[i] = 0.0
-		
-		#TODO: does this work correctly? is drag evenly applied? x/y? ???
-		self.v_moving = self.v_moving * self.f_drag #every update, we apply drag
-		
-		self.update_impl()
-		
-		#keeping a more accuarte position for calculations
-		self.f_centerx += self.v_moving[0]
-		self.f_centery += self.v_moving[1]
-		
-		#this is to wrap items around the edges
-		self.f_centerx = self.f_centerx % self.screen_dims[0]
-		self.f_centery = self.f_centery % self.screen_dims[1]
-		
-		#rect.centerxy is used for drawing, but is limited to ints	
-		self.rect.centerx = int(round(self.f_centerx))
-		self.rect.centery = int(round(self.f_centery))
+
+		if not self.hidden:
+			for i in [0,1]: #this is to prevent absurd calculations of drag
+				if math.fabs(self.v_moving[i]) <= 0.0005:
+					self.v_moving[i] = 0.0
+
+			#TODO: does this work correctly? is drag evenly applied? x/y? ???
+			self.v_moving = self.v_moving * self.f_drag #every update, we apply drag
+
+			self.update_impl()
+
+			#keeping a more accuarte position for calculations
+			self.f_centerx += self.v_moving[0]
+			self.f_centery += self.v_moving[1]
+
+			#this is to wrap items around the edges
+			self.f_centerx = self.f_centerx % self.screen_dims[0]
+			self.f_centery = self.f_centery % self.screen_dims[1]
+
+			#rect.centerxy is used for drawing, but is limited to ints
+			self.rect.centerx = int(round(self.f_centerx))
+			self.rect.centery = int(round(self.f_centery))
 		
 		
 	def update_impl(self):
 		print("NEVER USE THIS, OVERRIDE ME! @update_impl, Movable")
 
 	def blitme(self):
+		if not self.hidden:
+			self.blitme_impl()
+
+	def blitme_impl(self):
 		print("NEVER USE THIS, OVERRIDE ME! @blitme, Movable")
-		
+
 	def killme(self):
+		self.hidden = True
+		self.killme_impl()
+
+	def killme_impl(self):
 		print("NEVER USE THIS, OVERRIDE ME! @killme, Movable")
+

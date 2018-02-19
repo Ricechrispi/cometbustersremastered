@@ -18,6 +18,7 @@ class GameFunctions():
 				sys.exit() #if the game is closed by pressing the X
 
 			elif event.type == pygame.KEYDOWN or event.type == pygame.KEYUP:
+				print("debug: key pressed: " + str(event.key))
 
 				if event.key == pygame.K_ESCAPE: #TODO maybe remove this, escape closes the game
 					sys.exit()
@@ -25,9 +26,8 @@ class GameFunctions():
 				for i in list(range(0,len(self.control_list))):
 					if event.key in self.control_list[i].controls:
 						if event.type == pygame.KEYDOWN:
-							print("debug: key pressed: " + str(event.key))
 							self.check_keydown_events(event, self.ships[i], self.control_list[i].controls)
-						elif event.type == pygame.KEYUP:
+						else: #must be KEYUP
 							self.check_keyup_events(event, self.ships[i], self.control_list[i].controls)
 
 

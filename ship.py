@@ -60,7 +60,7 @@ class Ship(Movable):
 	
 	def __init__(self, pos, screen, size, props, player_number):	
 		super().__init__(pos, screen, size)
-		
+
 		#TODO: balance these!
 		self.f_drag = 0.995
 		self.base_speed = 4.0 
@@ -73,8 +73,9 @@ class Ship(Movable):
 		self.props = props
 		self.player_number = player_number
 		#TODO the values are unchecked
-		
-		self.image = pygame.image.load("pics/ship_dummy.png") #TODO: subject to changem maybe have someone else load this
+
+		image_name = "pics/"+props.color+".png"
+		self.image = pygame.image.load(image_name) #TODO: subject to change!
 		
 		#bools for moving by input
 		self.b_rotating_right = False
@@ -87,20 +88,20 @@ class Ship(Movable):
 		#TODO: balance hp and size here!
 		self.weapon = Weapon(self, 5, 160, 13, "pics/bullet_dummy.png", "TODO:soundfile")
 		
-		
-		
-	def blitme(self):
+
+
+	def blitme_impl(self):
 		"""drawing the current ship ()and it's bullets via the weapon)"""
 		
 		self.weapon.blitme() #drawing projectiles before, so ship is on top
-		
+
 		angle = math.degrees(math.acos(np.dot(np.array([0.0, -1.0]), self.v_facing)))
-		
+
 		if self.v_facing[0] > 0:
 			angle = -angle
-		
+
 		rotated_img_rect = util.rot_center(self.image, self.rect, angle)
-		
+
 		self.screen.blit(rotated_img_rect[0], rotated_img_rect[1]) #TODO: add color from properties
 		
 		
@@ -109,32 +110,32 @@ class Ship(Movable):
 			and velocity"""
 			
 		self.weapon.update()
-		
+
 		if self.b_rotating_left and self.b_rotating_right:
 			pass #both cancel each other out, but this should not really happen
-			
+
 		elif self.b_rotating_left:
-			
+
 			angle = self.base_rot * self.props.f_rot_speed
 			self.v_facing = util.rotate_v(self.v_facing, -angle, True)
 			#notice the '-' for rotating the other way
-			
+
 		elif self.b_rotating_right:
-			
+
 			angle = self.base_rot * self.props.f_rot_speed
 			self.v_facing = util.rotate_v(self.v_facing, angle, True)
-		
+
 		if self.b_thrusting:
 			#TODO: check and balance this
-			
+
 			added_thrust = self.v_facing * self.props.f_thrust
 			#print("added thrust: " + str(added_thrust))
-			
+
 			self.v_moving += added_thrust
-			
+
 			current_speed = util.mag_v(self.v_moving)
 			max_speed = self.base_speed * self.props.f_max_speed
-			
+
 			if current_speed > max_speed:
 				self.v_moving = (self.v_moving / current_speed) * max_speed
 			
