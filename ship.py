@@ -88,6 +88,9 @@ class Ship(Movable):
 		
 		#TODO: balance hp and size here!
 		self.weapon = Weapon(self, 5, 120, 13, "pics/bullet_dummy.png", self.level, "TODO:soundfile")
+
+		self.score = 123456789 #TODO reset to 0, just for testing!
+		self.lives = 5 #constant from the original, very first spawn reduces this to 4, 0 lives is still alive
 		
 
 

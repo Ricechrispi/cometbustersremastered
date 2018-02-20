@@ -4,9 +4,10 @@ import pygame
 
 class GameFunctions():
 
-	def __init__(self,ships,control_list):
+	def __init__(self,ships,control_list, huds):
 		self.ships = ships
 		self.control_list = control_list
+		self.huds = huds
 		#TODO we kinda rely on these two lists having the same length, and ok contents..
 
 	def check_events(self):
@@ -68,6 +69,9 @@ class GameFunctions():
 	def update_screen(self, bg_color, screen, level):
 
 		screen.fill(bg_color) #filling the background with a color
+
+		for h in self.huds:
+			h.blitme()
 
 		level.update()
 		level.blitme()
