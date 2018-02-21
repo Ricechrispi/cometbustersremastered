@@ -8,15 +8,32 @@ import hostiles
 
 class Level:
 	
-	def __init__(self, screen):
+	def __init__(self, screen, difficulty):
 		#TODO: things like, start round, points, background color?
 		#		chance of enemies spawning, difficulty etc.
 		self.screen = screen
 		self.screen_dims = screen.get_size()
+
+		# level 1: 9 on easy, 12 on challenging, 14 on impossible
+		if difficulty == 0:
+			self.amount_of_comets = 9
+		elif difficulty == 1:
+			self.amount_of_comets = 12
+		elif difficulty == 2:
+			self.amount_of_comets = 14
+		else:
+			print("debug: settings file has unknown difficulty, defaulting to 0")
+			self.amount_of_comets = 9
 		
-		self.round_number = 0
-		
+		self.round_number = -1 #first start of round bumps this to 0
+		self.spawn_cooldown = 120 #TODO adjust me
+		self.cur_cooldown = self.spawn_cooldown
+		self.round_in_progress = False
+
 		self.comets = pygame.sprite.Group()
+		self.enemy_ships = pygame.sprite.Group()
+		self.smilies = pygame.sprite.Group()
+
 
 		self.smiley_chances = []
 		self.comet_images_big = []
@@ -28,17 +45,50 @@ class Level:
 			self.comet_images_big.append(pygame.image.load(image_string + str(i) + "b.png"))
 			self.comet_images_med.append(pygame.image.load(image_string + str(i) + "m.png"))
 			self.comet_images_small.append(pygame.image.load(image_string + str(i) + "s.png"))
-			self.smiley_chances.append(0.0)
+			self.smiley_chances.append(100) #TODO factor in difficulty, round_number etc.
 			
+	def start_round(self):
+		print("debug: round starts")
+		self.round_in_progress = True
+		self.round_number += 1
+		self.spawn_comets(self.amount_of_comets, 0.4) #TODO adjust starting speed here
+
+	def end_round(self):
+		print("debug: round ended, setting cooldown")
+		#TODO stuff, display, points?
+		self.round_in_progress = False
+		self.cur_cooldown = self.spawn_cooldown
 
 	def update(self):
-		for comet in self.comets:
-			comet.update()
+
+		#TODO this is horribly complex for a simple task, make this great again! maybe move the cooldown from the start to the end of round!
+		if self.round_in_progress:
+			for comet in self.comets:
+				comet.update()
+		else:
+			if self.cur_cooldown > 0:
+				self.cur_cooldown -= 1
+			else:
+				self.start_round()
+
+		for enemy in self.enemy_ships:
+			enemy.update()
+		for smiley in self.smilies:
+			smiley.update()
+		#TODO random chance to spawn an enemy ship here! factor in difficulty?
+		if self.round_in_progress and self.cur_cooldown <= 0 and (len(self.comets.sprites()) == 0): #TODO yes this is bad and should be changed
+			self.end_round()
+
 
 		
 	def blitme(self):
 		for comet in self.comets:
 			comet.blitme()
+		for enemy in self.enemy_ships:
+			enemy.blitme()
+		for smiley in self.smilies:
+			smiley.blitme()
+
 
 	def spawn_comet_children(self, comet, v_killer):
 
@@ -58,7 +108,7 @@ class Level:
 			return
 
 		new_v = np.array([comet.v_moving[0] + v_killer[0], comet.v_moving[1] + v_killer[1]])
-		#TODO: this is not very realistic, mostly bullshit..
+		#TODO: this is not very realistic, mostly bullshit and way too fast
 		new_v1 = util.rotate_v(new_v, 45)
 		new_v2 = util.rotate_v(new_v, -45)
 

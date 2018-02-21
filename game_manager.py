@@ -30,19 +30,6 @@ def run_game():
 
 	bg_color = (0,0,0) #black, background_color
 
-	level = levels.Level(screen)
-	# level 1: 9 on easy, 12 on challenging, 14 on impossible
-	if settings.difficulty == 0:
-		amount_of_comets = 9
-	elif settings.difficulty == 1:
-		amount_of_comets = 12
-	elif settings.difficulty == 2:
-		amount_of_comets = 14
-	else:
-		print("debug: settings file has unknown difficulty, defaulting to 0")
-		amount_of_comets = 9
-	level.spawn_comets(amount_of_comets, 0.4)
-
 	upper_left = (settings.screen_width/4,settings.screen_height/4)
 	upper_right = (3*(settings.screen_width/4),settings.screen_height/4)
 	lower_left = (settings.screen_width/4,3*(settings.screen_height/4))
@@ -69,6 +56,8 @@ def run_game():
 					 (settings.screen_width-hud_size[0], 0),
 					 (0, settings.screen_height-hud_size[1])]
 
+
+	level = levels.Level(screen, settings.difficulty)
 
 	ships = []
 	controls = []
