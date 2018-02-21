@@ -26,6 +26,19 @@ class Hud:
 			d_offset += 14
 
 
+		self.life_image = pygame.image.load("pics/life_" + ship.props.color + ".png")
+		self.life_rects = []
+		l_offset = 5 #starts at 5 to the right of the first image
+		for i in list(range(0, 5)): #max of 5 lives? TODO check this later and prevent 6 lives?
+			self.life_rects.append(pygame.Rect(pos[0]+x_offset+l_offset, pos[1]+y_offset+8+17, #8 + 17 since it's 8px under the 17px score digit
+											   pos[0]+x_offset+l_offset+15, pos[1]+y_offset+8+15)) #15 since image is 15x15
+			l_offset += 20 #15 width image + 5 px between images
+
+		#pics/life_x.png is 15x15
+		#5px between lives
+		#8px under score, 5px to the right from far left digit
+
+
 	def blitme(self):
 		self.draw_box()
 		self.draw_lives()
@@ -62,14 +75,11 @@ class Hud:
 
 	def draw_lives(self):
 
-		#pics/life_x.png is 15x15
-		#5px between lives
-		#8px under score, 5px to the right from far left digit
-		#most right vanishes
+		#TODO most right vanishes
+		for i in list(range(0, self.ship.lives)):
+			self.screen.blit(self.life_image, self.life_rects[i])
 
-
-		pass #TODO in the right color
 
 	def draw_box(self):
-		pass #TODO maybe an outlying box around the stuff, not that important
+		pass #TODO maybe an outlying box around the stuff, not that important, not in original
 
