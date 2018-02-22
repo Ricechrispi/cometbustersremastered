@@ -26,7 +26,7 @@ class EnemyShip(Movable):
 
 class Comet(Movable):
 	
-	def __init__(self, pos, screen, size, level, image_obj, v_start, points):
+	def __init__(self, pos, screen, size, level, image_obj, v_start, points, round_number):
 		super().__init__(pos, screen, size)
 		
 		#big worth 20, middle 50, small 100
@@ -35,6 +35,7 @@ class Comet(Movable):
 		self.image = image_obj
 		self.v_moving = v_start
 		self.points = points
+		self.round_number = round_number
 		
 		
 	def update_impl(self):
@@ -44,6 +45,6 @@ class Comet(Movable):
 	def blitme_impl(self):
 		self.screen.blit(self.image, self.rect)
 
-	def killme_impl(self, killer_v=None):
+	def killme_impl(self, v_killer=None, killer=None):
 		self.kill()
-		self.level.spawn_comet_children(self, killer_v)
+		self.level.spawn_comet_children(self, v_killer)

@@ -52,6 +52,7 @@ class Weapon:
 								self.hp, self.image, self.level)
 			
 			self.bullets.add(bullet)
+			bullet.spawn()
 			#we shot, so the cooldown is up again
 			self.cur_cooldown += self.cooldown
 	
@@ -59,10 +60,10 @@ class Weapon:
 
 class Bullet(Movable):
 	
-	def __init__(self, pos, screen, size, creator, hp, image_obj, level):
+	def __init__(self, pos, screen, size, owner, hp, image_obj, level):
 		super().__init__(pos, screen, size)
 		
-		self.creator = creator
+		self.owner = owner
 		self.hp = hp
 		self.image = image_obj
 		self.level = level
@@ -70,12 +71,12 @@ class Bullet(Movable):
 		#TODO: balance me, maybe move this to the arguments
 		self.base_speed = 2.0
 		
-		self.v_facing[0] = creator.v_facing[0]
-		self.v_facing[1] = creator.v_facing[1]
+		self.v_facing[0] = owner.v_facing[0]
+		self.v_facing[1] = owner.v_facing[1]
 		
-		self.v_moving[0] = creator.v_moving[0] + self.v_facing[0] * (self.base_speed * creator.props.f_bullet_speed)
-		self.v_moving[1] = creator.v_moving[1] + self.v_facing[1] * (self.base_speed * creator.props.f_bullet_speed)
-		
+		self.v_moving[0] = owner.v_moving[0] + self.v_facing[0] * (self.base_speed * owner.props.f_bullet_speed)
+		self.v_moving[1] = owner.v_moving[1] + self.v_facing[1] * (self.base_speed * owner.props.f_bullet_speed)
+
 		
 	def blitme_impl(self):
 		self.screen.blit(self.image, self.rect)	
@@ -84,6 +85,5 @@ class Bullet(Movable):
 		self.hp -= 1
 		collided_comets = pygame.sprite.spritecollide(self, self.level.comets, False)
 		if len(collided_comets) > 0:
-			collided_comets[0].killme(self.v_moving)
+			collided_comets[0].killme(self.v_moving, self.owner)
 			self.kill()
-			#TODO give shooter the points

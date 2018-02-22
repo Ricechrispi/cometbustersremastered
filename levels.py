@@ -24,16 +24,10 @@ class Level:
 		else:
 			print("debug: settings file has unknown difficulty, defaulting to 0")
 			self.amount_of_comets = 9
-		
-		self.round_number = -1 #first start of round bumps this to 0
-		self.spawn_cooldown = 120 #TODO adjust me
-		self.cur_cooldown = self.spawn_cooldown
-		self.round_in_progress = False
 
 		self.comets = pygame.sprite.Group()
 		self.enemy_ships = pygame.sprite.Group()
 		self.smilies = pygame.sprite.Group()
-
 
 		self.smiley_chances = []
 		self.comet_images_big = []
@@ -47,38 +41,17 @@ class Level:
 			self.comet_images_small.append(pygame.image.load(image_string + str(i) + "s.png"))
 			self.smiley_chances.append(100) #TODO factor in difficulty, round_number etc.
 			
-	def start_round(self):
-		print("debug: round starts")
-		self.round_in_progress = True
-		self.round_number += 1
-		self.spawn_comets(self.amount_of_comets, 0.4) #TODO adjust starting speed here
 
-	def end_round(self):
-		print("debug: round ended, setting cooldown")
-		#TODO stuff, display, points?
-		self.round_in_progress = False
-		self.cur_cooldown = self.spawn_cooldown
 
 	def update(self):
-
-		#TODO this is horribly complex for a simple task, make this great again! maybe move the cooldown from the start to the end of round!
-		if self.round_in_progress:
-			for comet in self.comets:
-				comet.update()
-		else:
-			if self.cur_cooldown > 0:
-				self.cur_cooldown -= 1
-			else:
-				self.start_round()
-
+		for comet in self.comets:
+			comet.update()
 		for enemy in self.enemy_ships:
 			enemy.update()
 		for smiley in self.smilies:
 			smiley.update()
-		#TODO random chance to spawn an enemy ship here! factor in difficulty?
-		if self.round_in_progress and self.cur_cooldown <= 0 and (len(self.comets.sprites()) == 0): #TODO yes this is bad and should be changed
-			self.end_round()
 
+		#TODO random chance to spawn an enemy ship here! factor in difficulty?
 
 		
 	def blitme(self):
@@ -93,17 +66,14 @@ class Level:
 	def spawn_comet_children(self, comet, v_killer):
 
 		#TODO: I am not comfortable with using exact pixel sizes here
-		new_size = 0
-		new_points = 0
-		image = None
 		if comet.size == 65:
 			new_size = 37
 			new_points = 50
-			image = self.comet_images_med[self.round_number]
+			image = self.comet_images_med[comet.round_number]
 		elif comet.size == 37:
 			new_size = 17
 			new_points = 100
-			image = self.comet_images_small[self.round_number]
+			image = self.comet_images_small[comet.round_number]
 		else:
 			return
 
@@ -113,10 +83,10 @@ class Level:
 		new_v2 = util.rotate_v(new_v, -45)
 
 		new_comet1 = hostiles.Comet([comet.rect.centerx,comet.rect.centery], self.screen, new_size,
-						self, image, new_v1, new_points)
+						self, image, new_v1, new_points, comet.round_number)
 
 		new_comet2 = hostiles.Comet([comet.rect.centerx,comet.rect.centery], self.screen, new_size,
-						self, image, new_v2, new_points)
+						self, image, new_v2, new_points, comet.round_number)
 
 		#print("debug: parent comet.v_moving: " + str(comet.v_moving))
 		#print("debug: parent rect.centerx: " + str(comet.rect.centerx))
@@ -133,8 +103,11 @@ class Level:
 		self.comets.add(new_comet1)
 		self.comets.add(new_comet2)
 
+		new_comet1.spawn()
+		new_comet2.spawn()
 
-	def spawn_comets(self, amount, velocity):
+
+	def spawn_comets(self, amount, velocity, round_number):
 		
 		points = self.generate_spawn_points(amount)
 		vectors = self.generate_vectors(amount)
@@ -143,14 +116,12 @@ class Level:
 		for v in vectors:
 			new_vectors.append(v*velocity)
 		
-		i = 0
-		while i < amount: #TODO: balance these values (smiley)
+		for i in list(range(0,amount)): #TODO: balance these values (smiley)
 			new_comet = hostiles.Comet(points[i], self.screen, 65, self,
-						self.comet_images_big[self.round_number], new_vectors[i], 20)
-						
-						
+						self.comet_images_big[round_number], new_vectors[i], 20, round_number)
+
 			self.comets.add(new_comet)
-			i += 1
+			new_comet.spawn()
 
 	
 	def generate_spawn_points(self, amount):

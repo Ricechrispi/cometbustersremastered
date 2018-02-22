@@ -4,11 +4,27 @@ import pygame
 
 class GameFunctions():
 
-	def __init__(self,ships,control_list, huds):
+	def __init__(self,ships,control_list, huds, screen, level):
 		self.ships = ships
 		self.control_list = control_list
 		self.huds = huds
-		#TODO we kinda rely on these two lists having the same length, and ok contents..
+		#TODO we kinda rely on these three lists having the same length, and ok contents..
+
+		self.screen = screen
+		self.level = level
+
+		self.round_in_progress = False
+		self.round_number = 0
+		self.round_cooldown = 120 #TODO adjust
+		self.cur_cooldown = 0
+
+	def game_loop(self):
+
+		self.check_events()
+		self.update()
+		self.draw_screen()
+
+		#TODO?
 
 	def check_events(self):
 		"""this responds to keypresses and other events"""
@@ -51,7 +67,6 @@ class GameFunctions():
 			pass
 
 
-		#TODO: same as other function above
 	def check_keyup_events(self, event, ship, controls):
 		if event.key == controls[0]:
 			ship.b_thrusting = False
@@ -64,28 +79,55 @@ class GameFunctions():
 			pass
 
 
+	def start_round(self):
+		print("debug: round starts")
+		self.round_in_progress = True
+		self.round_number += 1
+		self.level.spawn_comets(self.level.amount_of_comets, 0.4, self.round_number) #TODO adjust starting speed here
+
+	def end_round(self):
+		print("debug: round ended, setting cooldown")
+		#TODO stuff, display, points?
+		self.round_in_progress = False
+		self.cur_cooldown = self.round_cooldown
 
 
-	def update_screen(self, bg_color, screen, level):
+	def update(self):
 
-		screen.fill(bg_color) #filling the background with a color
+		if len(self.level.comets) == 0:
+			if not self.round_in_progress: #round is not in progress and there are no comets!
+				if self.cur_cooldown == 0:
+					self.start_round()
+				else:
+					self.cur_cooldown -= 1
+			else: #round is in progress and there are no comets!
+				self.end_round()
+
+		self.level.update()
+
+		for ship in self.ships:
+			ship.update()
+
+
+	def draw_screen(self):
+
+		self.screen.fill((0,0,0)) #filling the background with black
 
 		for h in self.huds:
 			h.blitme()
 
-		level.update()
-		level.blitme()
+		self.level.blitme()
 
 		for ship in self.ships:
-			ship.update()
 			ship.blitme()
+
 
 		pygame.display.flip() #makes the most recently drawn frame/screen visible
 
 
 	#note: this is basically the same as creating a new GameFunctions object..
 	def refresh_settings(self, ships, control_list):
-		if (len(ships) == len(control_list)):
+		if len(ships) == len(control_list):
 			self.ships = ships
 			self.control_list = control_list
 		else:

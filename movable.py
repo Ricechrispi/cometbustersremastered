@@ -7,9 +7,8 @@ class Movable(pygame.sprite.Sprite):
 	def __init__(self, pos, screen, size):
 		super().__init__()
 		
-		#self.pos = [pos[0], pos[1]]
 		self.spawn_pos = [pos[0],pos[1]] #spawn is the same as the start location
-		self.hidden = False
+		self.hidden = True
 
 		self.screen = screen
 		self.screen_rect = screen.get_rect()
@@ -26,9 +25,15 @@ class Movable(pygame.sprite.Sprite):
 		self.rect.centery = pos[1]
 		self.f_centerx = float(self.rect.centerx)
 		self.f_centery = float(self.rect.centery)
-	
+
+		self.points = 0 #everything is worth 0 points unless overridden
+		self.score = 0 #everything keeps score.. even comets? xD
+
 	def spawn(self):
-		self.pos = [self.spawn_pos[0], self.spawn_pos[1]]
+		self.rect.centerx = self.spawn_pos[0]
+		self.rect.centery = self.spawn_pos[1]
+		self.f_centerx = float(self.spawn_pos[0])
+		self.f_centery = float(self.spawn_pos[1])
 		self.hidden = False
 
 	def update(self):
@@ -66,11 +71,13 @@ class Movable(pygame.sprite.Sprite):
 	def blitme_impl(self):
 		print("NEVER USE THIS, OVERRIDE ME! @blitme, Movable")
 
-	def killme(self, v_killer=None):
+	def killme(self, v_killer=None, killer=None):
 		self.hidden = True
-		self.killme_impl(v_killer)
+		if killer:
+			killer.score += self.points
+		self.killme_impl(v_killer, killer)
 
-	def killme_impl(self, v_killer=None):
+	def killme_impl(self, v_killer=None, killer=None):
 		print("NEVER USE THIS, OVERRIDE ME! @killme, Movable")
 
 

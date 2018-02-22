@@ -5,7 +5,6 @@ import game_settings as gs
 import game_functions
 import player_settings as ps
 import hud
-import hostiles
 import levels
 
 
@@ -28,7 +27,6 @@ def run_game():
 	screen = pygame.display.set_mode((settings.screen_width, settings.screen_height))
 	pygame.display.set_caption("WIP: _project") #TODO get the proper name here
 
-	bg_color = (0,0,0) #black, background_color
 
 	upper_left = (settings.screen_width/4,settings.screen_height/4)
 	upper_right = (3*(settings.screen_width/4),settings.screen_height/4)
@@ -65,10 +63,11 @@ def run_game():
 	for i in list(range(0,number_of_players)):
 		s = ship.Ship(ship_spawns[i],screen, 31,profiles[i].ship_props,i+1, level) #I start counting players from 1
 		ships.append(s)
+		s.spawn() #TODO move this somewhere else?
 		controls.append(profiles[i].control_scheme)
 		huds.append(hud.Hud(screen, hud_positions[i], s))
 
-	gf = game_functions.GameFunctions(ships, controls, huds)
+	gf = game_functions.GameFunctions(ships, controls, huds, screen, level)
 	clock = pygame.time.Clock()
 
 
@@ -78,8 +77,7 @@ def run_game():
 		#makes the loop wait a certain amount of time to achieve 60 ticks per s
 		clock.tick(60)
 		
-		gf.check_events()
-		gf.update_screen(bg_color, screen, level)
+		gf.game_loop()
 
 
 
