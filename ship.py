@@ -64,12 +64,13 @@ class Ship(Movable):
 		#TODO: balance these!
 		self.f_drag = 0.995
 		self.base_speed = 4.5
+		self.base_thrust = 1.3
 		self.base_rot = 3.8
 		self.base_bullet_speed = 6.4
 		self.base_shield = 1.0
 		self.base_disruptor = 1.0
 		self.base_hyperspace = 1.0
-		
+
 		self.props = props
 		self.player_number = player_number
 		self.level = level
@@ -85,12 +86,22 @@ class Ship(Movable):
 		
 		self.b_is_shooting = False
 		self.b_using_special = False
-		
-		#TODO: balance hp and size here!
-		self.weapon = Weapon(self, 5, 120, 13, "pics/bullet_dummy.png", self.level, "TODO:soundfile")
+
+
+		self.targets = [level.comets, level.smilies, level.enemy_ships]
+
+		#TODO: balance hp and size, speed, image and sound here
+		self.weapon = Weapon(self, 5, 120, 2.0, 13, "pics/bullet_dummy.png", self.targets, "TODO:soundfile")
 
 		self.lives = 5 #constant from the original, very first spawn reduces this to 4, 0 lives is still alive
-		
+		self.spawn_cooldown = 180 #TODO balance me, display?
+		self.cur_spawn_cooldown = 0 #TODO change?
+
+
+	#pls just call this once..
+	def enable_friendly_fire(self, player_ships):
+		self.targets.append(player_ships)
+		self.weapon.targets.append(player_ships) #need to update there as well
 
 
 	def blitme_impl(self):
@@ -109,39 +120,59 @@ class Ship(Movable):
 		
 		
 	def update_impl(self):
-		"""updating the thrust/rotation of the ship based on pressed keys
+		"""updating the weapon and the thrust/rotation of the ship based on pressed keys
 			and velocity"""
-			
+
 		self.weapon.update()
 
-		if self.b_rotating_left and self.b_rotating_right:
-			pass #both cancel each other out, but this should not really happen
+		if not self.hidden:
 
-		elif self.b_rotating_left:
+			if self.b_rotating_left and self.b_rotating_right:
+				pass #both cancel each other out, but this should not really happen
 
-			angle = self.base_rot * self.props.f_rot_speed
-			self.v_facing = util.rotate_v(self.v_facing, -angle, True)
-			#notice the '-' for rotating the other way
+			elif self.b_rotating_left:
 
-		elif self.b_rotating_right:
+				angle = self.base_rot * self.props.f_rot_speed
+				self.v_facing = util.rotate_v(self.v_facing, -angle, True)
+				#notice the '-' for rotating the other way
 
-			angle = self.base_rot * self.props.f_rot_speed
-			self.v_facing = util.rotate_v(self.v_facing, angle, True)
+			elif self.b_rotating_right:
 
-		if self.b_thrusting:
-			#TODO: check and balance this
+				angle = self.base_rot * self.props.f_rot_speed
+				self.v_facing = util.rotate_v(self.v_facing, angle, True)
 
-			added_thrust = self.v_facing * self.props.f_thrust
-			#print("added thrust: " + str(added_thrust))
+			if self.b_thrusting:
+				#TODO: check and balance this
 
-			self.v_moving += added_thrust
+				added_thrust = self.v_facing * self.props.f_thrust * self.base_thrust
+				#print("added thrust: " + str(added_thrust))
 
-			current_speed = util.mag_v(self.v_moving)
-			max_speed = self.base_speed * self.props.f_max_speed
+				self.v_moving += added_thrust
 
-			if current_speed > max_speed:
-				self.v_moving = (self.v_moving / current_speed) * max_speed
-			
-				
+				current_speed = util.mag_v(self.v_moving)
+				max_speed = self.base_speed * self.props.f_max_speed
 
-	#TODO def ___str__(self):	
+				if current_speed > max_speed:
+					self.v_moving = (self.v_moving / current_speed) * max_speed
+
+		else: #TODO I need to factor in hyperspace once I implement it HERE (hyperspace needs hidden = True for no collide)
+			if self.lives >= 0:
+				if self.cur_spawn_cooldown > 0:
+					self.cur_spawn_cooldown -= 1
+				else:
+					if self.spawn_location_is_free():
+						self.v_facing = np.array([0.0, -1.0])  # everything starts facing upwards
+						self.v_moving = np.array([0.0, 0.0])  # everything starts by not moving
+						self.spawn()
+			else:
+				print("You are dead, please implement this!") #TODO do this
+
+
+	def spawn_location_is_free(self):
+		return True #TODO implement this
+
+
+	def killme_impl(self, v_killer=None, killer=None):
+		self.lives -= 1
+		self.cur_spawn_cooldown = self.spawn_cooldown
+

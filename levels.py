@@ -8,7 +8,7 @@ import hostiles
 
 class Level:
 	
-	def __init__(self, screen, difficulty):
+	def __init__(self, screen, difficulty, ships_group):
 		#TODO: chance of enemies spawning, difficulty etc.
 		self.screen = screen
 		self.screen_dims = screen.get_size()
@@ -27,6 +27,7 @@ class Level:
 		self.comets = pygame.sprite.Group()
 		self.enemy_ships = pygame.sprite.Group()
 		self.smilies = pygame.sprite.Group()
+		self.ships_group = ships_group
 
 		self.smiley_chances = []
 		self.comet_images_big = []

@@ -1,13 +1,10 @@
 BIG TODOS:
 		read and use: https://www.pygame.org/docs/ref/sprite.html#pygame.sprite.Sprite
-		"kill" method for movables
-		hitbox interaction: comet&ship, comet&alien, comet&alien_bullet, ship&alien, ship&alien_bullet, ship&smiley, alien&smiley, alien_bullet&smiley
 		commet spawing comets (determine correct speed vectors...)
 		figure out sound
 		respawn  (life losing animation, check for game end, etc)
 		enemy ship complete (spawend by level/game manager)
 		smiley complete
-		comet complete
 		levels complete
 		special abilities: disruptor, shield, hyperspace, (none)
 		MENUE!!!!!

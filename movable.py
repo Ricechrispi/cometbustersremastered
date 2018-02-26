@@ -29,6 +29,8 @@ class Movable(pygame.sprite.Sprite):
 		self.points = 0 #everything is worth 0 points unless overridden
 		self.score = 0 #everything keeps score.. even comets? xD
 
+		self.targets = [] #everybody needs to override this to collide with something..
+
 	def spawn(self):
 		self.rect.centerx = self.spawn_pos[0]
 		self.rect.centery = self.spawn_pos[1]
@@ -59,6 +61,11 @@ class Movable(pygame.sprite.Sprite):
 			#rect.centerxy is used for drawing, but is limited to ints
 			self.rect.centerx = int(round(self.f_centerx))
 			self.rect.centery = int(round(self.f_centery))
+
+			self.check_collision()
+
+		else:
+			self.update_impl()
 		
 		
 	def update_impl(self):
@@ -81,3 +88,12 @@ class Movable(pygame.sprite.Sprite):
 		print("NEVER USE THIS, OVERRIDE ME! @killme, Movable")
 
 
+	def check_collision(self):
+		for i in list(range(0,len(self.targets))):
+			collisions = pygame.sprite.spritecollide(self, self.targets[i], False)
+			if len(collisions) > 0:
+				for j in list(range(0, len(collisions))):
+					if not collisions[j].hidden and collisions[j] != self:
+						collisions[j].killme(self.v_moving, self)
+						self.killme(collisions[j].v_moving, collisions[j])
+						return

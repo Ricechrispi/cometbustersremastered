@@ -7,14 +7,15 @@ from movable import Movable
 
 class Weapon:
 	
-	def __init__(self, owner, size, hp, spawn_offset, image_file, level, sound_file):
+	def __init__(self, owner, size, hp, base_speed, spawn_offset, image_file, targets, sound_file):
 		
 		self.owner = owner
 		self.size = size
 		self.hp = hp
+		self.base_speed = base_speed
 		self.spawn_offset = spawn_offset
 		self.image = pygame.image.load(image_file)
-		self.level = level
+		self.targets = targets
 		#TODO: sound file needs mixer? https://www.pygame.org/docs/ref/mixer.html
 		
 		self.bullets = pygame.sprite.Group()
@@ -39,7 +40,8 @@ class Weapon:
 				bullet.kill()
 				continue
 				#TODO: animation????? how???
-			bullet.update()
+			else:
+				bullet.update()
 			
 			
 	def shoot(self):
@@ -49,7 +51,7 @@ class Weapon:
 			pos = (self.owner.rect.centerx + self.owner.v_facing[0] * self.spawn_offset,
 					self.owner.rect.centery + self.owner.v_facing[1] * self.spawn_offset)
 			bullet = Bullet(pos, self.owner.screen, self.size, self.owner, 
-								self.hp, self.image, self.level)
+								self.hp, self.base_speed, self.image, self.targets)
 			
 			self.bullets.add(bullet)
 			bullet.spawn()
@@ -60,16 +62,15 @@ class Weapon:
 
 class Bullet(Movable):
 	
-	def __init__(self, pos, screen, size, owner, hp, image_obj, level):
+	def __init__(self, pos, screen, size, owner, hp, base_speed, image_obj, targets):
 		super().__init__(pos, screen, size)
 		
 		self.owner = owner
 		self.hp = hp
 		self.image = image_obj
-		self.level = level
+		self.targets = targets
 		
-		#TODO: balance me, maybe move this to the arguments
-		self.base_speed = 2.0
+		self.base_speed = base_speed
 		
 		self.v_facing[0] = owner.v_facing[0]
 		self.v_facing[1] = owner.v_facing[1]
@@ -83,7 +84,17 @@ class Bullet(Movable):
 		
 	def update_impl(self):
 		self.hp -= 1
-		collided_comets = pygame.sprite.spritecollide(self, self.level.comets, False)
-		if len(collided_comets) > 0:
-			collided_comets[0].killme(self.v_moving, self.owner)
-			self.kill()
+
+	def killme_impl(self, v_killer=None, killer=None):
+		self.kill()
+
+	#override since self.owner is the killer not the bullet itself
+	def check_collision(self):
+		for i in list(range(0,len(self.targets))):
+			collisions = pygame.sprite.spritecollide(self, self.targets[i], False)
+			if len(collisions) > 0:
+				for j in list(range(0, len(collisions))):
+					if not collisions[j].hidden and collisions[j] != self and collisions[j] != self.owner:
+						collisions[j].killme(self.v_moving, self.owner)
+						self.killme(collisions[j].v_moving, collisions[j])
+						return
