@@ -36,12 +36,20 @@ class Comet(Movable):
 		self.v_moving = v_start
 		self.points = points
 		self.round_number = round_number
+
+		if size >= 50:
+			self.type = "big"
+		elif size >= 27:
+			self.type = "medium"
+		else:
+			self.type = "small"
+
+		print("debug: created comet with size: "+str(size) + " in round_number: "+str(round_number))
 		
 		
 	def update_impl(self):
 		pass
-		#TODO: do something here?
-	
+
 	def blitme_impl(self):
 		self.screen.blit(self.image, self.rect)
 

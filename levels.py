@@ -9,8 +9,7 @@ import hostiles
 class Level:
 	
 	def __init__(self, screen, difficulty):
-		#TODO: things like, start round, points, background color?
-		#		chance of enemies spawning, difficulty etc.
+		#TODO: chance of enemies spawning, difficulty etc.
 		self.screen = screen
 		self.screen_dims = screen.get_size()
 
@@ -33,9 +32,9 @@ class Level:
 		self.comet_images_big = []
 		self.comet_images_med = []
 		self.comet_images_small = []
-		image_string = "pics/level"
+		image_string = "pics/comet"
 		
-		for i in range(0,2): #TODO: increase this as I make more pictures
+		for i in range(1,9):
 			self.comet_images_big.append(pygame.image.load(image_string + str(i) + "b.png"))
 			self.comet_images_med.append(pygame.image.load(image_string + str(i) + "m.png"))
 			self.comet_images_small.append(pygame.image.load(image_string + str(i) + "s.png"))
@@ -65,17 +64,16 @@ class Level:
 
 	def spawn_comet_children(self, comet, v_killer):
 
-		#TODO: I am not comfortable with using exact pixel sizes here
-		if comet.size == 65:
-			new_size = 37
+		if comet.type == "big":
 			new_points = 50
 			image = self.comet_images_med[comet.round_number]
-		elif comet.size == 37:
-			new_size = 17
+		elif comet.type == "medium":
 			new_points = 100
 			image = self.comet_images_small[comet.round_number]
 		else:
 			return
+
+		new_size = max(image.get_size()[0], image.get_size()[1]) #some are not squares, but this is close enough
 
 		new_v = np.array([comet.v_moving[0] + v_killer[0], comet.v_moving[1] + v_killer[1]])
 		#TODO: this is not very realistic, mostly bullshit and way too fast
@@ -117,8 +115,12 @@ class Level:
 			new_vectors.append(v*velocity)
 		
 		for i in list(range(0,amount)): #TODO: balance these values (smiley)
-			new_comet = hostiles.Comet(points[i], self.screen, 65, self,
-						self.comet_images_big[round_number], new_vectors[i], 20, round_number)
+
+			size = max(self.comet_images_big[round_number].get_size()[0],  #this is not perfect, but close enough
+						self.comet_images_big[round_number].get_size()[1])
+
+			new_comet = hostiles.Comet(points[i], self.screen, size, self, self.comet_images_big[round_number],
+									   	new_vectors[i], 20, round_number)
 
 			self.comets.add(new_comet)
 			new_comet.spawn()

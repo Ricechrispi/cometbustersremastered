@@ -14,17 +14,15 @@ class GameFunctions():
 		self.level = level
 
 		self.round_in_progress = False
-		self.round_number = 0
+		self.round_number = -1
 		self.round_cooldown = 120 #TODO adjust
 		self.cur_cooldown = 0
 
 	def game_loop(self):
-
 		self.check_events()
 		self.update()
 		self.draw_screen()
 
-		#TODO?
 
 	def check_events(self):
 		"""this responds to keypresses and other events"""
@@ -94,7 +92,7 @@ class GameFunctions():
 
 	def update(self):
 
-		if len(self.level.comets) == 0:
+		if len(self.level.comets) == 0: #TODO test this!!!
 			if not self.round_in_progress: #round is not in progress and there are no comets!
 				if self.cur_cooldown == 0:
 					self.start_round()
