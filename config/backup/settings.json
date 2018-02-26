@@ -1,1 +1,1 @@
-[[1280, 720], 0, 100, false, 100, false, ["config/p1.json", "config/p2.json", "config/p3.json", "config/p4.json"]]
+{"screen_height": 720, "music_is_muted": false, "music_volume": 100, "screen_width": 1280, "fx_is_muted": false, "profile_paths": ["config/p1.json", "config/p2.json", "config/p3.json", "config/p4.json"], "difficulty": 0, "fx_volume": 100}

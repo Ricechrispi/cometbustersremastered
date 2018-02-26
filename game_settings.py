@@ -6,22 +6,20 @@ class Settings:
 
 	def __init__(self, filename):
 		with open(filename) as f_obj:
-			args = json.load(f_obj)
+			dic = json.load(f_obj)
 
-			# TODO: add the other options here, all of them with default values!!
+			self.screen_width = dic["screen_width"]
+			self.screen_height = dic["screen_height"]
+			self.difficulty = dic["difficulty"]
+
+			self.fx_volume = dic["fx_volume"]
+			self.fx_is_muted = dic["fx_is_muted"]
+			self.music_volume = dic["music_volume"]
+			self.music_is_muted = dic["music_is_muted"]
+
+			self.profile_paths = dic["profile_paths"]
+
 			# TODO: I am currently trusting the input values, nothing is checked!
-
-			# Screen settings:
-			self.screen_width = args[0][0]  # e.g. 1920
-			self.screen_height = args[0][1]  # e.g. 1080
-
-			self.difficulty = args[1]  # 0 is easy, 1 is normal, 2 is hard etc.
-
-			self.fx_volume = args[2]  # from 0-100
-			self.fx_is_muted = args[3]
-			self.music_volume = args[4]  # from 0-100
-			self.music_is_muted = args[5]
-			self.profile_paths = args[6]
 
 	def toggle_fx(self):
 		self.fx_is_muted = not self.fx_is_muted
@@ -43,8 +41,17 @@ class Settings:
 		self.music_is_muted = default_settings.music_is_muted
 
 	def save_settings(self, filename):
-		s = [[self.screen_width, self.screen_height], self.difficulty, self.fx_volume, self.fx_is_muted,
-			 self.music_volume, self.music_is_muted, self.profile_paths]
+		s = {
+			"screen_width": self.screen_width,
+			"screen_height": self.screen_height,
+			"difficulty": self.difficulty,
+			"fx_volume": self.fx_volume,
+			"fx_is_muted":  self.fx_is_muted,
+			"music_volume":  self.music_volume,
+			"music_is_muted": self.music_is_muted,
+			"profile_paths":  self.profile_paths,
+		}
+
 		with open(filename, "w") as f_obj:
 			json.dump(s, f_obj)
 
