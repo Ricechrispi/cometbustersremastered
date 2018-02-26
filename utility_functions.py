@@ -28,3 +28,12 @@ def rotate_v(v, angle, fix_to_one=False):
 def mag_v(v):
 	"""returns the magnitude of a 2-dim vector"""
 	return math.sqrt(v[0]**2 + v[1]**2)
+
+
+def cropped_image_rects(width, height, number_of_parts):
+	"""creates rects to draw parts of an image"""
+	ret = []
+	for i in list(range(0, number_of_parts)):
+		offset = i * height
+		ret.append((0, offset, width, height))
+	return ret

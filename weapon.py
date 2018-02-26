@@ -64,7 +64,9 @@ class Bullet(Movable):
 	
 	def __init__(self, pos, screen, size, owner, hp, base_speed, image_obj, targets):
 		super().__init__(pos, screen, size)
-		
+
+		self.name = "bullet"
+
 		self.owner = owner
 		self.hp = hp
 		self.image = image_obj

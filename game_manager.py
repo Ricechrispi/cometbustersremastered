@@ -25,7 +25,7 @@ def run_game():
 	pygame.init()
 
 	screen = pygame.display.set_mode((settings.screen_width, settings.screen_height))
-	pygame.display.set_caption("WIP: _project") #TODO get the proper name here
+	pygame.display.set_caption("Comet_Busters.clone()")
 
 
 	upper_left = (settings.screen_width/4,settings.screen_height/4)
@@ -62,19 +62,13 @@ def run_game():
 	controls = []
 	huds = []
 	for i in list(range(0,number_of_players)):
-		s = ship.Ship(ship_spawns[i],screen, 31,profiles[i].ship_props,i+1, level) #I start counting players from 1
+		s = ship.Ship(ship_spawns[i],screen, (31,31),profiles[i].ship_props,i+1, level) #I start counting players from 1
 		ships.append(s)
 		ships_group.add(s)
 		s.spawn() #TODO move this somewhere else?
 		controls.append(profiles[i].control_scheme)
 		huds.append(hud.Hud(screen, hud_positions[i], s))
 
-	#for s in ships:
-	#	other_ships_group = pygame.sprite.Group()
-	#	for t in ships:
-	#		if s is not t:
-	#			other_ships_group.add(t)
-	#	s.enable_friendly_fire(other_ships_group)
 
 	for s in ships:
 		s.enable_friendly_fire(ships_group)

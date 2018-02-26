@@ -6,7 +6,8 @@ class Movable(pygame.sprite.Sprite):
 	
 	def __init__(self, pos, screen, size):
 		super().__init__()
-		
+
+		self.name = "movable"
 		self.spawn_pos = [pos[0],pos[1]] #spawn is the same as the start location
 		self.hidden = True
 
@@ -20,7 +21,7 @@ class Movable(pygame.sprite.Sprite):
 		self.f_drag = 1.0 #no drag normally
 		
 		self.size = size
-		self.rect = pygame.Rect(0,0, size, size)
+		self.rect = pygame.Rect(0,0, size[0], size[1])
 		self.rect.centerx = pos[0]
 		self.rect.centery = pos[1]
 		self.f_centerx = float(self.rect.centerx)
@@ -37,6 +38,8 @@ class Movable(pygame.sprite.Sprite):
 		self.f_centerx = float(self.spawn_pos[0])
 		self.f_centery = float(self.spawn_pos[1])
 		self.hidden = False
+
+		print("spawned "+self.name+" with size: "+ str(self.size) +" at "+str(self.spawn_pos))
 
 	def update(self):
 

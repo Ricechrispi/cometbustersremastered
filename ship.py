@@ -61,6 +61,9 @@ class Ship(Movable):
 	def __init__(self, pos, screen, size, props, player_number, level):
 		super().__init__(pos, screen, size)
 
+		self.name = "player_ship#"+str(player_number)
+
+
 		#TODO: balance these!
 		self.f_drag = 0.995
 		self.base_speed = 4.5
@@ -91,7 +94,7 @@ class Ship(Movable):
 		self.targets = [level.comets, level.smilies, level.enemy_ships]
 
 		#TODO: balance hp and size, speed, image and sound here
-		self.weapon = Weapon(self, 5, 120, 2.0, 13, "pics/bullet_dummy.png", self.targets, "TODO:soundfile")
+		self.weapon = Weapon(self, (5,5), 120, 2.0, 13, "pics/bullet_dummy.png", self.targets, "TODO:soundfile")
 
 		self.lives = 5 #constant from the original, very first spawn reduces this to 4, 0 lives is still alive
 		self.spawn_cooldown = 180 #TODO balance me, display?

@@ -1,4 +1,5 @@
 import pygame
+import utility_functions as util
 
 class Hud:
 
@@ -10,10 +11,7 @@ class Hud:
 		self.image = pygame.image.load("pics/numbers.png")
 
 		#these cropped_rects are the parts from the picture to be drawn
-		self.cropped_rects = []
-		for i in list(range(0,12)):
-			offset = i * 17
-			self.cropped_rects.append((0,offset,14,17))
+		self.cropped_rects = util.cropped_image_rects(14,17,12)
 
 		#these digit_rects are the position of each digit
 		self.digit_rects = []

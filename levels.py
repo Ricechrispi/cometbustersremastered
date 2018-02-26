@@ -29,6 +29,14 @@ class Level:
 		self.smilies = pygame.sprite.Group()
 		self.ships_group = ships_group
 
+		#TODO remove/move
+		test_enemy_ship = hostiles.EnemyShip((500,500),self.screen,(40,36,),self)
+		test_enemy_ship.spawn()
+		self.enemy_ships.add(test_enemy_ship)
+		test_smiley = hostiles.Smiley((700,500),self.screen,(14,14),self,np.array([0.0, 0.0]))
+		test_smiley.spawn()
+		self.smilies.add(test_smiley)
+
 		self.smiley_chances = []
 		self.comet_images_big = []
 		self.comet_images_med = []
@@ -74,7 +82,7 @@ class Level:
 		else:
 			return
 
-		new_size = max(image.get_size()[0], image.get_size()[1]) #some are not squares, but this is close enough
+		new_size = (image.get_size()[0], image.get_size()[1])
 
 		new_v = np.array([comet.v_moving[0] + v_killer[0], comet.v_moving[1] + v_killer[1]])
 		#TODO: this is not very realistic, mostly bullshit and way too fast
@@ -117,8 +125,8 @@ class Level:
 		
 		for i in list(range(0,amount)): #TODO: balance these values (smiley)
 
-			size = max(self.comet_images_big[round_number].get_size()[0],  #this is not perfect, but close enough
-						self.comet_images_big[round_number].get_size()[1])
+			size = (self.comet_images_big[round_number].get_size()[0],
+					self.comet_images_big[round_number].get_size()[1])
 
 			new_comet = hostiles.Comet(points[i], self.screen, size, self, self.comet_images_big[round_number],
 									   	new_vectors[i], 20, round_number)

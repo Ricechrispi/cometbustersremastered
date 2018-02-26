@@ -13,16 +13,22 @@ class GameFunctions():
 		self.screen = screen
 		self.level = level
 
+		self.font1 = pygame.font.SysFont("arial", 70, True) #TODO size?
+		self.label = self.render_label("LEVEL 1")
+
 		self.round_in_progress = False
 		self.round_number = -1
-		self.round_cooldown = 120 #TODO adjust
-		self.cur_cooldown = 0
+		self.round_cooldown = 180 #TODO adjust
+		self.cur_cooldown = self.round_cooldown
 
 	def game_loop(self):
 		self.check_events()
 		self.update()
 		self.draw_screen()
 
+	def render_label(self, s):
+		#TODO shadow: https://stackoverflow.com/questions/18974194/text-shadow-with-python
+		return self.font1.render(s, 1, (255,32, 128))
 
 	def check_events(self):
 		"""this responds to keypresses and other events"""
@@ -82,12 +88,15 @@ class GameFunctions():
 		self.round_in_progress = True
 		self.round_number += 1
 		self.level.spawn_comets(self.level.amount_of_comets, 0.4, self.round_number) #TODO adjust starting speed here
+		self.label = None
+
 
 	def end_round(self):
 		print("debug: round ended, setting cooldown")
 		#TODO stuff, display, points?
 		self.round_in_progress = False
 		self.cur_cooldown = self.round_cooldown
+		self.label = self.render_label("LEVEL "+str(self.round_number+1))
 
 
 	def update(self):
@@ -119,6 +128,8 @@ class GameFunctions():
 		for ship in self.ships:
 			ship.blitme()
 
+		if self.label is not None:
+			self.screen.blit(self.label, (500,200)) #TODO make this in the right pos!
 
 		pygame.display.flip() #makes the most recently drawn frame/screen visible
 
