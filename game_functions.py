@@ -13,8 +13,11 @@ class GameFunctions():
 		self.screen = screen
 		self.level = level
 
+		self.game_has_ended = False
+
 		self.font1 = pygame.font.SysFont("arial", 70, True) #TODO size?
 		self.label = self.render_label("LEVEL 1")
+		self.label_pos = (self.screen.get_rect().center[0], int(self.screen.get_rect().height/4))
 
 		self.round_in_progress = False
 		self.round_number = -1
@@ -28,7 +31,7 @@ class GameFunctions():
 
 	def render_label(self, s):
 		#TODO shadow: https://stackoverflow.com/questions/18974194/text-shadow-with-python
-		return self.font1.render(s, 1, (255,32, 128))
+		return self.font1.render(s, True, (255,32, 128))
 
 	def check_events(self):
 		"""this responds to keypresses and other events"""
@@ -40,10 +43,6 @@ class GameFunctions():
 
 			elif event.type == pygame.KEYDOWN or event.type == pygame.KEYUP:
 				#print("debug: key pressed: " + str(event.key))
-
-				if event.key == pygame.K_ESCAPE: #TODO maybe remove this, escape closes the game
-					sys.exit()
-
 				for i in list(range(0,len(self.control_list))):
 					if event.key in self.control_list[i].controls:
 						if event.type == pygame.KEYDOWN:
@@ -101,7 +100,7 @@ class GameFunctions():
 
 	def update(self):
 
-		if len(self.level.comets) == 0: #TODO test this!!!
+		if len(self.level.comets) == 0:
 			if not self.round_in_progress: #round is not in progress and there are no comets!
 				if self.cur_cooldown == 0:
 					self.start_round()
@@ -129,9 +128,8 @@ class GameFunctions():
 			ship.blitme()
 
 		if self.label is not None:
-			self.screen.blit(self.label, (500,200)) #TODO make this in the right pos!
+			self.screen.blit(self.label, (int(self.label_pos[0]-self.label.get_rect().width/2),self.label_pos[1]))
 
-		pygame.display.flip() #makes the most recently drawn frame/screen visible
 
 
 	#note: this is basically the same as creating a new GameFunctions object..
